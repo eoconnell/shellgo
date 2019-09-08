@@ -91,7 +91,7 @@ type BashGenerator struct {
 }
 
 func (g BashGenerator) HandleCmd(node Cmd) {
-  g.Write("macie_cmd " + shellescape(node.command))
+  g.Write("travis_cmd " + shellescape(node.command))
 }
 
 func (g BashGenerator) HandleIf(node If) {
