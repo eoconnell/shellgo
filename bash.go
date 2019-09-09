@@ -38,7 +38,7 @@ func (e Cmd) handle(g Generator) {
 
 type If struct {
   condition string
-  block func(*Shell)
+  block func()
   branches []Commands
 }
 
@@ -68,7 +68,7 @@ func (sh *Shell) cmd(command string) {
   sh.Node(&Cmd{command})
 }
 
-func (sh *Shell) if_(condition string, block func(*Shell)) {
+func (sh *Shell) if_(condition string, block func()) {
   sh.Node(&If{condition: condition, block: block})
 }
 
@@ -81,7 +81,7 @@ func (sh *Shell) Node(n Handler) {
 }
 
 func (sh Shell) String() string {
-  return fmt.Sprintf("Shell{%s}", sh.body)
+  return fmt.Sprintf("Shell{%s}", sh.nodes)
 }
 
 /////////////////////////////
@@ -130,7 +130,7 @@ func main() {
   sh := Shell{}
   sh.export("FOO", "bar")
   sh.cmd("pip install -r requirements.txt")
-  sh.if_("! -f /opt/virtualenv/python3/bin/activate", func(sh *Shell) {
+  sh.if_("! -f /opt/virtualenv/python3/bin/activate", func() {
     sh.cmd("terminate")
   })
 
