@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "io"
+  "io/ioutil"
   "log"
   "os"
   "regexp"
@@ -222,6 +223,8 @@ func shellescape(str string) string {
 /////////////////////////////
 
 func main() {
+  functions := []string { "travis_cmd.bash" }
+
   var example string
   if len(os.Args) > 1 {
     example = os.Args[1]
@@ -234,7 +237,7 @@ func main() {
     sh.export("FOO", "\"this is a variable\"")
     sh.raw("echo \"$FOO\"")
     sh.if_("-f myscript", func() {
-      sh.raw("./myscript")
+      sh.cmd("./myscript")
     })
   }
   if (example == "python3") {
@@ -255,6 +258,14 @@ func main() {
     os.Exit(1)
   }
   defer file.Close()
+
+  for _, filename := range functions {
+    data, err := ioutil.ReadFile("./functions/"+filename)
+    if err != nil {
+      log.Fatal("error reading file", err)
+    }
+    file.Write(data)
+  }
 
   //Generate(sh, os.Stdout)
   Generate(sh, file)
