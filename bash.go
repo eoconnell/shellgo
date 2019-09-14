@@ -52,6 +52,7 @@ func (n Cmds) String() string {
 
 type Cmd struct {
   command string
+  raw bool
 }
 
 func (e Cmd) handle(g Generator) {
@@ -59,7 +60,7 @@ func (e Cmd) handle(g Generator) {
 }
 
 func (e Cmd) String() string {
-  return fmt.Sprintf("<cmd{%s}>", e.command)
+  return fmt.Sprintf("<cmd{%s raw=%v}>", e.command, e.raw)
 }
 
 /////////////////////////////
@@ -89,7 +90,7 @@ func (e If) handle(g Generator) {
 }
 
 func (e If) String() string {
-  return fmt.Sprintf("<if{%s %s}>", e.condition, e.nodes)
+  return fmt.Sprintf("<if{%s then=%s}>", e.condition, e.nodes)
 }
 
 /////////////////////////////
@@ -122,7 +123,13 @@ func NewShell() Shell {
 }
 
 func (sh *Shell) cmd(command string) {
-  n := &Cmd{command}
+  n := &Cmd{command, false}
+  sh.last().Insert(n)
+  sh.Node(n)
+}
+
+func (sh *Shell) raw(command string) {
+  n := &Cmd{command, true}
   sh.last().Insert(n)
   sh.Node(n)
 }

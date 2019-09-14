@@ -7,6 +7,22 @@ import (
   "bufio"
 )
 
+func TestGenerateRaw(t *testing.T) {
+  var buf bytes.Buffer
+  out := bufio.NewWriter(&buf)
+  sh := NewShell()
+  sh.raw("exit 1")
+
+  Generate(sh, out)
+
+  out.Flush()
+  expected := "exit 1\n"
+  actual := buf.String()
+  if actual != expected {
+    t.Errorf("Expected `%s` but got `%s`", expected, actual)
+  }
+}
+
 func TestGenerateCmd(t *testing.T) {
   var buf bytes.Buffer
   out := bufio.NewWriter(&buf)
