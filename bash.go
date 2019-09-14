@@ -223,13 +223,22 @@ func shellescape(str string) string {
 func main() {
   sh := NewShell()
   sh.export("FOO", "bar")
-  sh.cmd("pip install -r requirements.txt")
+  //sh.cmd("pip install -r requirements.txt")
+  sh.raw("echo \"$FOO\"")
   sh.if_("! -f /opt/virtualenv/python3/bin/activate", func() {
-    sh.cmd("terminate")
+    sh.raw("echo 'failure'")
   })
 
   fmt.Println(sh)
   fmt.Println()
 
-  Generate(sh, os.Stdout)
+  file, err := os.Create("./build.sh")
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+  defer file.Close()
+
+  //Generate(sh, os.Stdout)
+  Generate(sh, file)
 }
