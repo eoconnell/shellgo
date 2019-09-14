@@ -171,19 +171,23 @@ func (g BashGenerator) HandleCmd(node Cmd) {
 }
 
 func (g BashGenerator) HandleIf(node If) {
-  g.Write("if [[ " + node.condition + " ]]; then")
+  g.Writeln("if [[ " + node.condition + " ]]; then")
     for _, n := range node.nodes {
       n.handle(g)
     }
-  g.Write("fi")
+  g.Writeln("fi")
 }
 
 func (g BashGenerator) HandleExport(node Export) {
-  g.Write(fmt.Sprintf("export %s=%s", node.key, node.value))
+  g.Writeln(fmt.Sprintf("export %s=%s", node.key, node.value))
+}
+
+func (g BashGenerator) Writeln(str string) {
+  g.Write(str + "\n")
 }
 
 func (g BashGenerator) Write(str string) {
-  g.out.Write([]byte(str + "\n"))
+  g.out.Write([]byte(str))
 }
 
 /////////////////////////////
