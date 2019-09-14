@@ -217,7 +217,7 @@ func Generate(sh Shell, writer io.Writer) {
 
 func shellescape(str string) string {
   var pattern = regexp.MustCompile(`([^A-Za-z0-9_\-.,:\/@\n])`)
-  return pattern.ReplaceAllString(str, "\\\\$1")
+  return pattern.ReplaceAllString(str, "\\$1")
 }
 
 /////////////////////////////
@@ -241,11 +241,11 @@ func main() {
     })
   }
   if (example == "python3") {
-    sh.raw("python3 -V")
-    sh.raw("pip3 -V")
+    sh.cmd("python3 -V")
+    sh.cmd("pip3 -V")
     sh.if_("-f requirements.txt", func() {
-      sh.raw("echo 'installing dependencies'")
-      sh.raw("pip3 install -r requirements.txt")
+      sh.cmd("echo 'installing dependencies'")
+      sh.cmd("pip3 install -r requirements.txt")
     })
   }
 

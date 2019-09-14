@@ -32,7 +32,7 @@ func TestGenerateCmd(t *testing.T) {
   Generate(sh, out)
 
   out.Flush()
-  expected := "travis_cmd python\\\\ --version\n"
+  expected := "travis_cmd python\\ --version\n"
   actual := buf.String()
   if actual != expected {
     t.Errorf("Expected `%s` but got `%s`", expected, actual)
@@ -67,7 +67,7 @@ func TestGenerateIf(t *testing.T) {
 
   out.Flush()
   expected := `if [[ -e requirements.txt ]]; then
-    travis_cmd pip\\ install\\ -r\\ requirements.txt
+    travis_cmd pip\ install\ -r\ requirements.txt
 fi
 `
   actual := buf.String()
