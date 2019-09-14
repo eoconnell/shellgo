@@ -17,11 +17,35 @@ type Handler interface {
   handle(g Generator)
 }
 
+type Commands interface {
+  Nodes() []Handler
+  Insert(h Handler)
+  handle(g Generator)
+}
+
 /////////////////////////////
 
-type Commands struct {
+type Cmds struct {
   nodes []Handler
-  block func(*Shell)
+  block func(*Commands)
+}
+
+func (n *Cmds) Nodes() []Handler {
+  return n.nodes
+}
+
+func (n *Cmds) Insert(h Handler) {
+  n.nodes = append(n.nodes, h)
+}
+
+func (n Cmds) handle(g Generator) {
+  for _, node := range n.nodes {
+    node.handle(g)
+  }
+}
+
+func (n Cmds) String() string {
+  return fmt.Sprintf("Cmds{%s}", n.nodes)
 }
 
 /////////////////////////////
@@ -34,16 +58,38 @@ func (e Cmd) handle(g Generator) {
   g.HandleCmd(e)
 }
 
+func (e Cmd) String() string {
+  return fmt.Sprintf("<cmd{%s}>", e.command)
+}
+
 /////////////////////////////
 
 type If struct {
   condition string
-  block func()
+  nodes []Handler
   branches []Commands
+}
+
+func NewIf(condition string, block func(Commands)) *If {
+  n := &If{condition: condition}
+  block(n)
+  return n
+}
+
+func (e *If) Nodes() []Handler {
+  return e.nodes
+}
+
+func (e *If) Insert(h Handler) {
+  e.nodes = append(e.nodes, h)
 }
 
 func (e If) handle(g Generator) {
   g.HandleIf(e)
+}
+
+func (e If) String() string {
+  return fmt.Sprintf("<if{%s %s}>", e.condition, e.nodes)
 }
 
 /////////////////////////////
@@ -57,31 +103,61 @@ func (e Export) handle(g Generator) {
   g.HandleExport(e)
 }
 
+func (e Export) String() string {
+  return fmt.Sprintf("<export{%s %s}>", e.key, e.value)
+}
+
 /////////////////////////////
 
 type Shell struct {
   body []string
   nodes []Handler
+  stack []Commands
+}
+
+func NewShell() Shell {
+  sh := Shell{}
+  sh.stack = append(sh.stack, &Cmds{})
+  return sh
 }
 
 func (sh *Shell) cmd(command string) {
-  sh.Node(&Cmd{command})
+  n := &Cmd{command}
+  sh.last().Insert(n)
+  sh.Node(n)
 }
 
 func (sh *Shell) if_(condition string, block func()) {
-  sh.Node(&If{condition: condition, block: block})
+  b := sh.WithNode(block)
+  n := NewIf(condition, b)
+  sh.last().Insert(n)
+  sh.Node(n)
 }
 
 func (sh *Shell) export(key, value string) {
-  sh.Node(&Export{key, value})
+  n := &Export{key, value}
+  sh.last().Insert(n)
+  sh.Node(n)
 }
 
 func (sh *Shell) Node(n Handler) {
   sh.nodes = append(sh.nodes, n)
 }
 
+func (sh *Shell) WithNode(block func()) func(Commands) {
+  return func(node Commands) {
+    sh.stack = append(sh.stack, node)
+    block()
+    sh.stack = sh.stack[:len(sh.stack)-1]
+  }
+}
+
+func (sh *Shell) last() Commands {
+  return sh.stack[len(sh.stack)-1]
+}
+
 func (sh Shell) String() string {
-  return fmt.Sprintf("Shell{%s}", sh.nodes)
+  return fmt.Sprintf("Shell{%s}", sh.stack)
 }
 
 /////////////////////////////
@@ -96,6 +172,9 @@ func (g BashGenerator) HandleCmd(node Cmd) {
 
 func (g BashGenerator) HandleIf(node If) {
   g.Write("if [[ " + node.condition + " ]]; then")
+    for _, n := range node.nodes {
+      n.handle(g)
+    }
   g.Write("fi")
 }
 
@@ -110,9 +189,8 @@ func (g BashGenerator) Write(str string) {
 /////////////////////////////
 
 func Generate(sh Shell, writer io.Writer) {
-  fmt.Println("#!/bin/bash")
   g := BashGenerator{writer}
-  for _, node := range sh.nodes {
+  for _, node := range sh.stack {
     node.handle(g)
   }
 }
@@ -127,7 +205,7 @@ func shellescape(str string) string {
 /////////////////////////////
 
 func main() {
-  sh := Shell{}
+  sh := NewShell()
   sh.export("FOO", "bar")
   sh.cmd("pip install -r requirements.txt")
   sh.if_("! -f /opt/virtualenv/python3/bin/activate", func() {
