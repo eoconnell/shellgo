@@ -167,12 +167,17 @@ type BashGenerator struct {
 }
 
 func (g BashGenerator) HandleCmd(node Cmd) {
-  g.Write("travis_cmd " + shellescape(node.command))
+  if node.raw {
+    g.Writeln(node.command)
+  } else {
+    g.Writeln("travis_cmd " + shellescape(node.command))
+  }
 }
 
 func (g BashGenerator) HandleIf(node If) {
   g.Writeln("if [[ " + node.condition + " ]]; then")
     for _, n := range node.nodes {
+      g.Write("    ") // lazy indentation
       n.handle(g)
     }
   g.Writeln("fi")

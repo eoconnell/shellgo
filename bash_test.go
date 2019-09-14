@@ -51,7 +51,7 @@ func TestGenerateIf(t *testing.T) {
 
   out.Flush()
   expected := `if [[ -e requirements.txt ]]; then
-travis_cmd pip\\ install\\ -r\\ requirements.txt
+    travis_cmd pip\\ install\\ -r\\ requirements.txt
 fi
 `
   actual := buf.String()
