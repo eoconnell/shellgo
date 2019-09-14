@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo 'my script'
+exit 2

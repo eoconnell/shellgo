@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "io"
+  "log"
   "os"
   "regexp"
 )
@@ -221,18 +222,34 @@ func shellescape(str string) string {
 /////////////////////////////
 
 func main() {
+  var example string
+  if len(os.Args) > 1 {
+    example = os.Args[1]
+  } else {
+    log.Fatal("missing example argument")
+  }
   sh := NewShell()
-  sh.export("FOO", "bar")
-  //sh.cmd("pip install -r requirements.txt")
-  sh.raw("echo \"$FOO\"")
-  sh.if_("! -f /opt/virtualenv/python3/bin/activate", func() {
-    sh.raw("echo 'failure'")
-  })
+
+  if (example == "bash") {
+    sh.export("FOO", "\"this is a variable\"")
+    sh.raw("echo \"$FOO\"")
+    sh.if_("-f myscript", func() {
+      sh.raw("./myscript")
+    })
+  }
+  if (example == "python3") {
+    sh.raw("python3 -V")
+    sh.raw("pip3 -V")
+    sh.if_("-f requirements.txt", func() {
+      sh.raw("echo 'installing dependencies'")
+      sh.raw("pip3 install -r requirements.txt")
+    })
+  }
 
   fmt.Println(sh)
   fmt.Println()
 
-  file, err := os.Create("./build.sh")
+  file, err := os.Create("./examples/" + example + "/build.sh")
   if err != nil {
     fmt.Println(err)
     os.Exit(1)
