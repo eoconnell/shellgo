@@ -2,6 +2,7 @@ package main
 
 import (
   "encoding/json"
+  "flag"
   "io/ioutil"
   "log"
   "os"
@@ -12,13 +13,10 @@ import (
 )
 
 func main() {
-  var file string
-  if len(os.Args) > 1 {
-    file = os.Args[1]
-  } else {
-    log.Fatal("expected a file to be provided as the first argument")
-  }
-  config := configFromFile(file)
+
+  var file = flag.String("file", "config.json", "config file")
+  flag.Parse()
+  config := configFromFile(*file)
 
   var s script.Script
   if config.Build.Language == "python" {
