@@ -1,0 +1,10 @@
+{
+  "build": {
+    "language": "bash",
+    "env": [],
+    "install": [],
+    "script": [
+      "myscript"
+    ]
+  }
+}
