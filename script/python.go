@@ -40,7 +40,7 @@ func (py Python) Install() {
 func (py Python) BeforeScript() { py.sh.NoOp() }
 
 func (py Python) Script() {
-  py.sh.Cmd("Please override the script: key")
+  py.sh.Cmd("echo 'Please override the script: key'")
   py.sh.Cmd("exit 2")
 }
 
