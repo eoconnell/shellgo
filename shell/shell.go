@@ -45,6 +45,14 @@ func (sh *Shell) Raw(command string) {
   sh.node(n)
 }
 
+func (sh *Shell) NewLine() {
+  sh.Raw("")
+}
+
+func (sh *Shell) NoOp() {
+  sh.Raw(":")
+}
+
 func (sh *Shell) If(condition string, block func()) {
   b := sh.withNode(block)
   n := NewIf(condition, b)

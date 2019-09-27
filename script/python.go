@@ -22,14 +22,14 @@ func (py Python) Shell() *shell.Shell {
   return py.sh
 }
 
-func (py Python) Setup() {}
+func (py Python) Setup() { py.sh.NoOp() }
 
 func (py Python) Announce() {
   py.sh.Cmd("python3 --version")
   py.sh.Cmd("pip3 --version")
 }
 
-func (py Python) BeforeInstall() {}
+func (py Python) BeforeInstall() { py.sh.NoOp() }
 
 func (py Python) Install() {
   py.sh.If("-f requirements.txt", func() {
@@ -37,7 +37,7 @@ func (py Python) Install() {
   })
 }
 
-func (py Python) BeforeScript() {}
+func (py Python) BeforeScript() { py.sh.NoOp() }
 
 func (py Python) Script() {
   py.sh.Cmd("Please override the script: key")
