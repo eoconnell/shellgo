@@ -19,3 +19,13 @@ bash:
 
 	go run bash.go bash && \
 	docker run --rm -it -v "$(CURDIR)/examples/bash:/home/app" -w /home/app build/general bash build.sh
+
+.PHONY: test
+test:
+
+	go test ./... -coverprofile=coverage.out
+
+.PHONY: cover
+cover:
+
+	go tool cover -html=coverage.out
