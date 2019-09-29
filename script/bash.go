@@ -18,23 +18,23 @@ type Bash struct {
   config schema.Config
 }
 
-func (bash Bash) Shell() *shell.Shell {
-  return bash.sh
+func (self Bash) Shell() *shell.Shell {
+  return self.sh
 }
 
-func (bash Bash) Setup() {}
+func (self Bash) Setup() { self.sh.NoOp() }
 
-func (bash Bash) Announce() {
-  bash.sh.Cmd("bash --version")
+func (self Bash) Announce() {
+  self.sh.Cmd("bash --version")
 }
 
-func (bash Bash) BeforeInstall() {}
+func (self Bash) BeforeInstall() { self.sh.NoOp() }
 
-func (bash Bash) Install() {}
+func (self Bash) Install() { self.sh.NoOp() }
 
-func (bash Bash) BeforeScript() {}
+func (self Bash) BeforeScript() { self.sh.NoOp() }
 
-func (bash Bash) Script() {
-  bash.sh.Cmd("Please override the script: key")
-  bash.sh.Cmd("exit 2")
+func (self Bash) Script() {
+  self.sh.Cmd("Please override the script: key")
+  self.sh.Cmd("exit 2")
 }

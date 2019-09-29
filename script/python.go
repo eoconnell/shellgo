@@ -18,29 +18,29 @@ type Python struct {
   config schema.Config
 }
 
-func (py Python) Shell() *shell.Shell {
-  return py.sh
+func (self Python) Shell() *shell.Shell {
+  return self.sh
 }
 
-func (py Python) Setup() { py.sh.NoOp() }
+func (self Python) Setup() { self.sh.NoOp() }
 
-func (py Python) Announce() {
-  py.sh.Cmd("python3 --version")
-  py.sh.Cmd("pip3 --version")
+func (self Python) Announce() {
+  self.sh.Cmd("python3 --version")
+  self.sh.Cmd("pip3 --version")
 }
 
-func (py Python) BeforeInstall() { py.sh.NoOp() }
+func (self Python) BeforeInstall() { self.sh.NoOp() }
 
-func (py Python) Install() {
-  py.sh.If("-f requirements.txt", func() {
-    py.sh.Cmd("pip3 install -r requirements.txt")
+func (self Python) Install() {
+  self.sh.If("-f requirements.txt", func() {
+    self.sh.Cmd("pip3 install -r requirements.txt")
   })
 }
 
-func (py Python) BeforeScript() { py.sh.NoOp() }
+func (self Python) BeforeScript() { self.sh.NoOp() }
 
-func (py Python) Script() {
-  py.sh.Cmd("echo 'Please override the script: key'")
-  py.sh.Cmd("exit 2")
+func (self Python) Script() {
+  self.sh.Cmd("echo 'Please override the script: key'")
+  self.sh.Cmd("exit 2")
 }
 
