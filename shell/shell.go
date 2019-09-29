@@ -1,7 +1,6 @@
 package shell
 
 import(
-  "fmt"
   "regexp"
 )
 
@@ -80,10 +79,6 @@ func (sh *Shell) withNode(block func()) func(Commands) {
 
 func (sh *Shell) last() Commands {
   return sh.stack[len(sh.stack)-1]
-}
-
-func (sh Shell) String() string {
-  return fmt.Sprintf("Shell{%s}", sh.stack)
 }
 
 func shellescape(str string) string {

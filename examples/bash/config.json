@@ -4,7 +4,8 @@
     "env": [],
     "install": [],
     "script": [
-      "myscript"
+      "echo 'Hello, world'",
+      "./myscript"
     ]
   }
 }

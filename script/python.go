@@ -5,7 +5,7 @@ import (
   "github.com/eoconnell/shell/shell"
 )
 
-func NewPythonScript(config schema.Config) *Python {
+func NewPython(config schema.Config) *Python {
   script := Python{}
   script.config = config
   shell := shell.NewShell()

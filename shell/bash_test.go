@@ -47,3 +47,24 @@ func ExampleGenerate_If() {
   //     travis_cmd pip\ install\ -r\ requirements.txt
   // fi
 }
+
+func ExampleGenerate_NoOp() {
+  sh := NewShell()
+  sh.NoOp()
+
+  Generate(sh, os.Stdout)
+
+  // Output:
+  // :
+}
+
+func ExampleGenerate_NewLine() {
+  sh := NewShell()
+  sh.NewLine()
+
+  Generate(sh, os.Stdout)
+
+  // Output:
+  //
+
+}

@@ -9,7 +9,6 @@ import (
 
   "github.com/eoconnell/shell/schema"
   "github.com/eoconnell/shell/script"
-  "github.com/eoconnell/shell/shell"
 )
 
 func main() {
@@ -18,17 +17,8 @@ func main() {
   flag.Parse()
   config := configFromFile(*file)
 
-  var s script.Script
-  if config.Build.Language == "python" {
-    s = script.NewPythonScript(config)
-  } else if config.Build.Language == "bash" {
-    s = script.NewBashScript(config)
-  } else {
-    s = nil
-  }
 
-  script.Run(config, s)
-  shell.Generate(s.Shell(), os.Stdout)
+  script.Compile(config, os.Stdout)
 }
 
 func configFromFile(file string) schema.Config {

@@ -5,7 +5,7 @@ import (
   "github.com/eoconnell/shell/shell"
 )
 
-func NewBashScript(config schema.Config) *Bash {
+func NewBash(config schema.Config) *Bash {
   script := Bash{}
   script.config = config
   shell := shell.NewShell()

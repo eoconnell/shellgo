@@ -11,14 +11,14 @@ debug:
 .PHONY: python3
 python3:
 
-	go run bash.go python3 && \
-	docker run --rm -it -v "$(CURDIR)/examples/python3:/home/app" -w /home/app build/general bash build.sh
+	go run cmd/build.go -file "$(CURDIR)/examples/$@/config.json" > $(CURDIR)/examples/$@/build.sh && \
+	docker run --rm -it -v "$(CURDIR)/examples/$@:/home/app" -w /home/app build/general bash build.sh
 
 .PHONY: bash
 bash:
 
-	go run bash.go bash && \
-	docker run --rm -it -v "$(CURDIR)/examples/bash:/home/app" -w /home/app build/general bash build.sh
+	go run cmd/build.go -file "$(CURDIR)/examples/$@/config.json" > $(CURDIR)/examples/$@/build.sh && \
+	docker run --rm -it -v "$(CURDIR)/examples/$@:/home/app" -w /home/app build/general bash build.sh
 
 .PHONY: test
 test:

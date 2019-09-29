@@ -1,6 +1,10 @@
 package script
 
 import (
+  "io"
+  "io/ioutil"
+  "log"
+
   "github.com/eoconnell/shell/schema"
   "github.com/eoconnell/shell/shell"
 )
@@ -15,23 +19,40 @@ type Script interface {
   Shell() *shell.Shell
 }
 
-func BuiltinPhase(sh *shell.Shell, user []string, script func()) {
-  if len(user) != 0 {
-    for _, command := range user {
-      sh.Cmd(command)
+var functions = []string {
+  "travis_setup_env.bash",
+  "travis_cmd.bash",
+  "travis_result.bash" }
+
+func Compile(config schema.Config, out io.Writer) {
+  s := byLang(config)
+
+  sh := s.Shell()
+  sh.Raw("#!/bin/bash")
+
+  for _, filename := range functions {
+    data, err := ioutil.ReadFile("functions/"+filename)
+    if err != nil {
+      log.Fatal("error reading file", err)
     }
-  } else {
-    script()
+    sh.Raw(string(data))
   }
+
+  Stages(config, s)
+  shell.Generate(sh, out)
 }
 
-func Run(config schema.Config, script Script) {
-  sh := script.Shell()
-  script.Setup()
-  script.Announce()
-  script.BeforeInstall()
-  BuiltinPhase(sh, config.Build.Install, script.Install)
-  script.BeforeScript()
-  BuiltinPhase(sh, config.Build.Script, script.Script)
+func byLang(config schema.Config) Script {
+  var s Script
+  switch lang := config.Build.Language; lang {
+  case "python":
+    s = NewPython(config)
+  case "bash":
+    s = NewBash(config)
+  case "java":
+    s = NewJava(config)
+  default:
+    s = nil
+  }
+  return s
 }
-
