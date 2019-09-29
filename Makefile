@@ -20,6 +20,12 @@ bash:
 	go run cmd/build.go -file "$(CURDIR)/examples/$@/config.json" > $(CURDIR)/examples/$@/build.sh && \
 	docker run --rm -it -v "$(CURDIR)/examples/$@:/home/app" -w /home/app build/general bash build.sh
 
+.PHONY: java
+java:
+
+	go run cmd/build.go -file "$(CURDIR)/examples/$@/config.json" > $(CURDIR)/examples/$@/build.sh && \
+	docker run --rm -it -v "$(CURDIR)/examples/$@:/home/app" -w /home/app build/general bash build.sh
+
 .PHONY: test
 test:
 

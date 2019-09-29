@@ -1,0 +1,8 @@
+{
+  "build": {
+    "language": "java",
+    "env": [],
+    "install": [],
+    "script": []
+  }
+}
