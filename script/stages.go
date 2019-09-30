@@ -37,6 +37,9 @@ func Stages(config schema.Config, script Script) {
       method := reflect.ValueOf(script).MethodByName(goName(stage))
       if method.IsValid() {
         method.Call([]reflect.Value{})
+        if stage == "script" {
+          sh.Raw("travis_result $?")
+        }
       } else {
         sh.NoOp()
       }
