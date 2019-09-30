@@ -27,13 +27,15 @@ func (self Java) Setup() { self.sh.NoOp() }
 func (self Java) Announce() {
   self.sh.Cmd("java --version")
   self.sh.Cmd("javac --version")
+  self.sh.Cmd("mvn --version")
 }
 
 func (self Java) BeforeInstall() { self.sh.NoOp() }
 
 func (self Java) Install() {
   self.sh.If("-f pom.xml", func() {
-    self.sh.Cmd("mvn install -DskipTests=true")
+    self.sh.Cmd("mvn dependency:resolve-plugins -B")
+    self.sh.Cmd("mvn dependency:resolve -B")
   })
 }
 
@@ -41,6 +43,6 @@ func (self Java) BeforeScript() { self.sh.NoOp() }
 
 func (self Java) Script() {
   self.sh.If("-f pom.xml", func() {
-    self.sh.Cmd("mvn test")
+    self.sh.Cmd("mvn test -B")
   })
 }

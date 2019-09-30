@@ -6,6 +6,7 @@ RUN apt update && \
         golang \
         nodejs \
         openjdk-11-jdk \
+        maven \
         python3 \
         python3-pip \
     && apt-get clean
