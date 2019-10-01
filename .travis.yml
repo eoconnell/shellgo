@@ -2,4 +2,6 @@ language: go
 
 go_import_path: github.com/eoconnell/shell
 
+go: "1.12"
+
 script: go test ./...
